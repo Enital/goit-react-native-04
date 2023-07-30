@@ -8,7 +8,7 @@ const GridIcon = () => {
         console.log("GridIcon");
       }}
     >
-      <Feather name="grid" size={24} color="rgba(33, 33, 33, 0.8)" />
+      <Feather name="grid" size={24} color="rgba(33, 33, 33, 1)" />
     </Pressable>
   );
 };

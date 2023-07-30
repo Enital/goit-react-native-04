@@ -8,7 +8,7 @@ export const ButtonNewPost = () => {
         console.log("ButtonNewPost");
       }}
     >
-      <Ionicons name="add-outline" size={24} color="#FFFFFF" />
+      <Ionicons name="add-outline" size={24} color="white" />
     </Pressable>
   );
 };

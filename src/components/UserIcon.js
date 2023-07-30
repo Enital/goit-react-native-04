@@ -9,7 +9,7 @@ const UserIcon = () => {
         console.log("UserIcon");
       }}
     >
-      <Feather name="user" size={24} color="#212121CC" />
+      <Feather name="user" size={24} color="white" />
     </Pressable>
   );
 };
