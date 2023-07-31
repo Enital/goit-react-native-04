@@ -35,10 +35,7 @@ export const LoginScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? "-250" : "-250"}
-        >
+        <KeyboardAvoidingView behavior={"position"}>
           <View style={styles.loginContainer}>
             <Text style={styles.h2}>Увійти</Text>
             <View style={styles.loginInputContainer}>
@@ -87,7 +84,7 @@ export const LoginScreen = () => {
               <Text style={styles.buttonText}>Увійти</Text>
             </Pressable>
             <View style={styles.underButtonTextContainer}>
-              <Text style={styles.textUnderButton}>Немає акаунту?</Text>
+              <Text style={styles.textUnderButton}>Немає акаунту? </Text>
               <Pressable
                 onPress={() => navigation.navigate("Registration")}
                 hitSlop={{ left: 10, bottom: 15, top: 15, right: 15 }}

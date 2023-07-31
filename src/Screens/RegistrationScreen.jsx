@@ -14,6 +14,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import addImg from ".//..//..//assets/images/add.png";
+
 const RegistrationScreen = () => {
   const [login, setLogine] = useState("");
   const [email, setEmail] = useState("");
@@ -39,10 +40,7 @@ const RegistrationScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? "-190" : "-260"}
-        >
+        <KeyboardAvoidingView behavior={"position"}>
           <View style={styles.registrationContainer}>
             <View style={styles.imgContainer}>
               <Image style={styles.addIcon} source={addImg} />
@@ -83,7 +81,6 @@ const RegistrationScreen = () => {
             <View style={styles.registrationInputContainer}>
               <TextInput
                 maxLength={23}
-                // скрыть текст
                 secureTextEntry={passwordVisibility}
                 selectionColor="blue"
                 keyboardType="visible-password"
@@ -93,7 +90,6 @@ const RegistrationScreen = () => {
                 style={styles.registrationInput}
                 value={password}
                 onChangeText={setPassword}
-                //не показывает кнопку 'Enter' если пустое поле
                 enablesReturnKeyAutomatically={true}
               />
               <Pressable
@@ -114,7 +110,7 @@ const RegistrationScreen = () => {
               <Text style={styles.buttonText}>Зареєструватися</Text>
             </Pressable>
             <View style={styles.underButtonTextContainer}>
-              <Text style={styles.textUnderButton}>Вже є акаунт?</Text>
+              <Text style={styles.textUnderButton}>Вже є акаунт? </Text>
               <Pressable
                 onPress={() => navigation.navigate("Login")}
                 hitSlop={{ left: 10, bottom: 15, top: 15, right: 15 }}
@@ -134,6 +130,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
+  // keyboard: {
+  //   flex: 1,
+  // },
   registrationContainer: {
     //     height: 549,
     width: "100%",
