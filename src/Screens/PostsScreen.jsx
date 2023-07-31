@@ -1,9 +1,9 @@
-import { Text, View, StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
-const PostsScreen = () => {
+export const PostsScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>PostsScreen</Text>
+      <Text>Тут будуть всі Ваші публікації</Text>
     </View>
   );
 };
@@ -11,9 +11,8 @@ const PostsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
   },
 });
-
-export default PostsScreen;

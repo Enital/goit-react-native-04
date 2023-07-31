@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
-const ProfileScreen = () => {
+export const ProfileScreen = () => {
   return (
     <View style={styles.container}>
-      <Text>ProfileScreen</Text>
+      <Text>Інформація про профіль</Text>
     </View>
   );
 };
@@ -11,9 +11,8 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
   },
 });
-
-export default ProfileScreen;

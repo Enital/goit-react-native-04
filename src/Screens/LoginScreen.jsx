@@ -1,3 +1,5 @@
+import { useNavigation } from "@react-navigation/native";
+import { useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -5,188 +7,173 @@ import {
   Text,
   TextInput,
   KeyboardAvoidingView,
-  Keyboard,
   TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
 
 export const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisibility, setPasswordVisibility] = useState(true);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
+  const [isShowPass, setIsShowPass] = useState(true);
 
   const navigation = useNavigation();
-  const onLoginButtonPress = () => {
-    if (!email || !password) {
-      return;
-    }
-    console.log("Email:", email + ", Password:", password);
-    navigation.navigate("Home", {
-      screen: "PostsScreen",
-      params: { email, password },
-    });
+
+  const emailInput = useRef();
+  const passInput = useRef();
+
+  const handleShowPass = () => {
+    setIsShowPass((current) => !current);
+  };
+  const handleSubmit = () => {
+    const credentials = { email, password };
+    console.log(credentials);
+    setEmail(null);
+    setPassword(null);
+    navigation.navigate("Home", { screen: "PostsScreen" });
   };
 
-  const toggleShowPassword = () => {
-    setPasswordVisibility(!passwordVisibility);
+  const handleOnFocus = (type, inputName) => {
+    switch (type) {
+      case "focus":
+        return () => {
+          setIsFocus(true);
+          emailInput.current = inputName === "emailInput";
+          passInput.current = inputName === "passInput";
+        };
+
+      case "blur":
+        return () => {
+          setIsFocus(false);
+          inputName.current = 0;
+        };
+
+      default:
+        return;
+    }
+  };
+  const inputStyle = (inputName) => {
+    return [
+      styles.input,
+      {
+        borderColor: inputName.current && isFocus ? "#FF6C00" : "#E8E8E8",
+      },
+    ];
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior={"position"}>
-          <View style={styles.loginContainer}>
-            <Text style={styles.h2}>Увійти</Text>
-            <View style={styles.loginInputContainer}>
+        <View style={styles.loginContainer}>
+          <Text style={styles.title}>Увійти</Text>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <TextInput
+              ref={emailInput}
+              style={inputStyle(emailInput)}
+              placeholder="Адреса електронної пошти"
+              inputMode="email"
+              placeholderTextColor="#BDBDBD"
+              onChangeText={setEmail}
+              value={email}
+              onFocus={handleOnFocus("focus", "emailInput")}
+              onBlur={handleOnFocus("blur", "emailInput")}
+            />
+            <View style={styles.passwordInput}>
               <TextInput
-                secureTextEntry={false}
-                selectionColor="blue"
-                inputMode="email"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                placeholder="Адреса електронної пошти"
-                placeholderTextColor="#BDBDBD"
-                style={styles.loginInput}
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
-            <View style={styles.loginInputContainer}>
-              <TextInput
-                maxLength={23}
-                secureTextEntry={passwordVisibility}
-                selectionColor="blue"
-                keyboardType="visible-password"
-                textContentType="password"
+                ref={passInput}
+                style={[...inputStyle(passInput), { marginBottom: 43 }]}
                 placeholder="Пароль"
                 placeholderTextColor="#BDBDBD"
-                style={styles.loginInput}
-                value={password}
                 onChangeText={setPassword}
-                enablesReturnKeyAutomatically={true}
+                value={password}
+                secureTextEntry={isShowPass}
+                onFocus={handleOnFocus("focus", "passInput")}
+                onBlur={handleOnFocus("blur", "passInput")}
               />
-              <Pressable
-                onPress={toggleShowPassword}
-                hitSlop={{ left: 40, bottom: 15, top: 15, right: 15 }}
-              >
-                {passwordVisibility ? (
-                  <Text style={styles.textShowButton}>Показати</Text>
-                ) : (
-                  <Text style={styles.textShowButton}>Сховати</Text>
-                )}
+              <Pressable style={styles.showPassBtn} onPress={handleShowPass}>
+                <Text style={styles.showPassText}>
+                  {isShowPass ? "Показати" : "Сховати"}
+                </Text>
               </Pressable>
             </View>
-            <Pressable
-              style={styles.buttonRegistration}
-              onPress={onLoginButtonPress}
-            >
-              <Text style={styles.buttonText}>Увійти</Text>
+            <Pressable style={styles.loginBtn} onPress={handleSubmit}>
+              <Text style={styles.loginText}>Увійти</Text>
             </Pressable>
-            <View style={styles.underButtonTextContainer}>
-              <Text style={styles.textUnderButton}>Немає акаунту? </Text>
-              <Pressable
-                onPress={() => navigation.navigate("Registration")}
-                hitSlop={{ left: 10, bottom: 15, top: 15, right: 15 }}
-              >
-                <Text style={styles.textUnderButton}> Зареєструватися</Text>
-              </Pressable>
-            </View>
+          </KeyboardAvoidingView>
+          <View style={styles.questionCont}>
+            <Text style={styles.questionText}>Немає акаунту? </Text>
+            <Pressable onPress={() => navigation.navigate("Registration")}>
+              <Text style={styles.questionText}>Зареєструватися</Text>
+            </Pressable>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-
+  container: { flex: 1, justifyContent: "flex-end" },
   loginContainer: {
+    position: "relative",
     width: "100%",
     height: 489,
-    backgroundColor: "#FFFFFF",
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    overflow: "hidden",
+    backgroundColor: "#fff",
     paddingTop: 32,
-  },
-  h2: {
-    color: "#212121",
-    textAlign: "center",
-    fontSize: 30,
-    fontFamily: "Roboto",
-    fontWeight: 500,
-    letterSpacing: 0.3,
-    marginBottom: 33,
-  },
-  loginInputContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginBottom: 16,
-    height: 50,
-    width: 343,
-    backgroundColor: "#E8E8E8",
+    paddingBottom: 144,
     paddingLeft: 16,
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingRight: 15,
-    borderRadius: 10,
-  },
-  loginInput: {
-    width: 239,
-    fontSize: 16,
-    fontFamily: "Roboto",
-  },
-  textShowButton: {
-    color: "#1B4371",
-    fontSize: 16,
-    fontFamily: "Roboto",
-  },
-  buttonRegistration: {
-    marginTop: 27,
-    marginBottom: 16,
-    borderRadius: 100,
-    height: 51,
-    width: 343,
-    display: "flex",
-    flexDirection: "column",
+    paddingRight: 16,
     alignItems: "center",
-    justifyContent: "center",
-    marginLeft: "auto",
-    marginRight: "auto",
-    fontFamily: "Roboto",
-    fontSize: 16,
-    backgroundColor: "#FF6C00",
   },
-  buttonText: {
-    color: "#FFFFFF",
-    fontFamily: "Roboto",
-    fontSize: 16,
+  title: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 30,
+    marginBottom: 32,
   },
-  underButtonTextContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
+  input: {
+    width: 343,
+    height: 50,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 8,
+    marginBottom: 16,
+    padding: 16,
+    borderColor: "#E8E8E8",
+    borderWidth: 1,
   },
-  textUnderButton: {
+  passwordInput: {
+    position: "relative",
+  },
+  showPassBtn: {
+    position: "absolute",
+    top: 16,
+    left: 255,
+  },
+  showPassText: {
+    fontFamily: "Roboto-Regular",
     color: "#1B4371",
-    textAlign: "center",
-    fontSize: 16,
-    fontFamily: "Roboto",
   },
-  registrationLink: {
-    textDecorationLine: "underline",
+  loginBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 343,
+    height: 51,
+    borderRadius: 25,
+    backgroundColor: "#FF6C00",
+    marginBottom: 16,
+  },
+  loginText: {
+    fontFamily: "Roboto-Regular",
+    color: "#fff",
+  },
+  questionCont: {
+    flexDirection: "row",
+  },
+  questionText: {
+    fontFamily: "Roboto-Regular",
+    color: "#1B4371",
   },
 });
-
-export default LoginScreen;

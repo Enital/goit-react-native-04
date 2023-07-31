@@ -1,233 +1,232 @@
+import { useNavigation } from "@react-navigation/native";
+import { useRef, useState } from "react";
 import {
   View,
-  Image,
-  Text,
-  KeyboardAvoidingView,
-  TextInput,
-  Button,
-  Platform,
   StyleSheet,
   Pressable,
-  TouchableWithoutFeedback,
+  Image,
+  Text,
+  TextInput,
   Keyboard,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import addImg from ".//..//..//assets/images/add.png";
+import AddBtn from "../../assets/images/addBtn.png";
+import DelBtn from "../../assets/images/delBtn.png";
+import UserImg from "../../assets/images/user.jpg";
 
-const RegistrationScreen = () => {
-  const [login, setLogine] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisibility, setPasswordVisibility] = useState(true);
+export const RegistrationScreen = () => {
+  const [userImage, setUserImage] = useState(false);
+  const [login, setLogin] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [isShowPass, setIsShowPass] = useState(true);
+  const [isFocus, setIsFocus] = useState(false);
 
   const navigation = useNavigation();
 
-  const onRegistrationButtonPress = () => {
-    if (!login || !email || !password) {
-      return;
-    }
-    console.log("Login:", login + ", email:", email + ", password:", password);
-    navigation.navigate("Home", {
-      screen: "PostsScreen",
-    });
+  const loginInput = useRef();
+  const emailInput = useRef();
+  const passInput = useRef();
+
+  const handleAddBtnPress = () => {
+    setUserImage((current) => !current);
+  };
+  const handleShowPass = () => {
+    setIsShowPass((current) => !current);
+  };
+  const handleSubmit = () => {
+    const credentials = { login, email, password };
+    console.log(credentials);
+    setLogin(null);
+    setEmail(null);
+    setPassword(null);
+    navigation.navigate("Home", { screen: "PostsScreen" });
   };
 
-  const toggleShowPassword = () => {
-    setPasswordVisibility(!passwordVisibility);
+  const handleOnFocus = (type, inputName) => {
+    switch (type) {
+      case "focus":
+        return () => {
+          setIsFocus(true);
+          emailInput.current = inputName === "emailInput";
+          passInput.current = inputName === "passInput";
+          loginInput.current = inputName === "loginInput";
+        };
+
+      case "blur":
+        return () => {
+          setIsFocus(false);
+          inputName.current = 0;
+        };
+
+      default:
+        return;
+    }
+  };
+
+  const inputStyle = (inputName) => {
+    return [
+      styles.input,
+      {
+        borderColor: inputName.current && isFocus ? "#FF6C00" : "#E8E8E8",
+      },
+    ];
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior={"position"}>
-          <View style={styles.registrationContainer}>
-            <View style={styles.imgContainer}>
-              <Image style={styles.addIcon} source={addImg} />
-            </View>
-            <View>
-              <Text style={styles.h2}>Peєстрація</Text>
-            </View>
-            <View style={styles.registrationInputContainer}>
-              <TextInput
-                maxLength={26}
-                inputMode="text"
-                secureTextEntry={false}
-                selectionColor="blue"
-                textContentType="name"
-                placeholder="Login"
-                placeholderTextColor="#BDBDBD"
-                style={styles.registrationInput}
-                value={login}
-                onChangeText={setLogine}
+        <View style={styles.registrationContainer}>
+          <View style={styles.userImgCont}>
+            {userImage && <Image style={styles.userImg} source={UserImg} />}
+            <Pressable style={styles.addButton} onPress={handleAddBtnPress}>
+              <Image
+                source={userImage ? DelBtn : AddBtn}
+                style={styles.addBtnImg}
               />
-            </View>
-
-            <View style={styles.registrationInputContainer}>
+            </Pressable>
+          </View>
+          <Text style={styles.title}>Реєстрація</Text>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+          >
+            <TextInput
+              style={inputStyle(loginInput)}
+              placeholder="Логін"
+              placeholderTextColor="#BDBDBD"
+              onChangeText={setLogin}
+              value={login}
+              ref={loginInput}
+              onFocus={handleOnFocus("focus", "loginInput")}
+              onBlur={handleOnFocus("blur", "loginInput")}
+            />
+            <TextInput
+              style={inputStyle(emailInput)}
+              placeholder="Адреса електронної пошти"
+              inputMode="email"
+              placeholderTextColor="#BDBDBD"
+              onChangeText={setEmail}
+              value={email}
+              ref={emailInput}
+              onFocus={handleOnFocus("focus", "emailInput")}
+              onBlur={handleOnFocus("blur", "emailInput")}
+            />
+            <View style={styles.passwordInput}>
               <TextInput
-                secureTextEntry={false}
-                selectionColor="blue"
-                inputMode="email"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                placeholder="Адреса електронної пошти"
-                placeholderTextColor="#BDBDBD"
-                style={styles.registrationInput}
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
-
-            <View style={styles.registrationInputContainer}>
-              <TextInput
-                maxLength={23}
-                secureTextEntry={passwordVisibility}
-                selectionColor="blue"
-                keyboardType="visible-password"
-                textContentType="password"
+                style={[...inputStyle(passInput), { marginBottom: 43 }]}
                 placeholder="Пароль"
                 placeholderTextColor="#BDBDBD"
-                style={styles.registrationInput}
-                value={password}
                 onChangeText={setPassword}
-                enablesReturnKeyAutomatically={true}
+                value={password}
+                secureTextEntry={isShowPass}
+                ref={passInput}
+                onFocus={handleOnFocus("focus", "passInput")}
+                onBlur={handleOnFocus("blur", "passInput")}
               />
-              <Pressable
-                onPress={toggleShowPassword}
-                hitSlop={{ left: 40, bottom: 15, top: 15, right: 15 }}
-              >
-                {!passwordVisibility ? (
-                  <Text style={styles.textShowButton}>Сховати</Text>
-                ) : (
-                  <Text style={styles.textShowButton}>Показати</Text>
-                )}
+              <Pressable style={styles.showPassBtn} onPress={handleShowPass}>
+                <Text style={styles.showPassText}>
+                  {isShowPass ? "Показати" : "Сховати"}
+                </Text>
               </Pressable>
             </View>
-            <Pressable
-              style={styles.buttonRegistration}
-              onPress={onRegistrationButtonPress}
-            >
-              <Text style={styles.buttonText}>Зареєструватися</Text>
+            <Pressable style={styles.registerBtn} onPress={handleSubmit}>
+              <Text style={styles.registerText}>Зареєстуватися</Text>
             </Pressable>
-            <View style={styles.underButtonTextContainer}>
-              <Text style={styles.textUnderButton}>Вже є акаунт? </Text>
-              <Pressable
-                onPress={() => navigation.navigate("Login")}
-                hitSlop={{ left: 10, bottom: 15, top: 15, right: 15 }}
-              >
-                <Text style={styles.textUnderButton}> Увійти</Text>
-              </Pressable>
-            </View>
+          </KeyboardAvoidingView>
+          <View style={styles.questionCont}>
+            <Text style={styles.questionText}>Вже є акаунт? </Text>
+            <Pressable onPress={() => navigation.navigate("Login")}>
+              <Text style={styles.questionText}>Увійти</Text>
+            </Pressable>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  // keyboard: {
-  //   flex: 1,
-  // },
+  container: { flex: 1, justifyContent: "flex-end" },
   registrationContainer: {
-    //     height: 549,
+    position: "relative",
     width: "100%",
-    backgroundColor: "#FFFFFF",
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    height: 549,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+    backgroundColor: "#fff",
     paddingTop: 92,
     paddingBottom: 78,
+    paddingLeft: 16,
+    paddingRight: 16,
+    alignItems: "center",
   },
-  imgContainer: {
-    position: "absolute",
-    top: -50,
-    left: "50%",
-    transform: [{ translateX: -60 }],
-    backgroundColor: "#F6F6F6",
+  userImgCont: {
     width: 120,
     height: 120,
+    position: "absolute",
+    top: -60,
     borderRadius: 16,
+    backgroundColor: "#F6F6F6",
   },
-  addIcon: {
-    height: 25,
+  addButton: {
     width: 25,
+    height: 25,
+    borderRadius: 12.5,
     position: "absolute",
     top: 81,
     left: 107,
   },
-  h2: {
-    color: "#212121",
-    textAlign: "center",
+  addBtnImg: {
+    borderRadius: 12.5,
+  },
+  userImg: {
+    borderRadius: 16,
+  },
+  title: {
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
-    fontFamily: "Roboto",
-    fontWeight: 500,
-    letterSpacing: 0.3,
-    marginBottom: 33,
+    marginBottom: 32,
   },
-  registrationInputContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginBottom: 16,
+  input: {
+    width: 343,
     height: 50,
-    width: 343,
-    backgroundColor: "#E8E8E8",
-    paddingLeft: 16,
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingRight: 16,
-    borderRadius: 10,
-  },
-  registrationInput: {
-    width: 239,
-    fontSize: 16,
-    fontFamily: "Roboto",
-  },
-  textShowButton: {
-    color: "#1B4371",
-    fontSize: 16,
-    fontFamily: "Roboto",
-  },
-  buttonRegistration: {
-    marginTop: 27,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 8,
     marginBottom: 16,
-    borderRadius: 100,
-    height: 51,
-    width: 343,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: "auto",
-    marginRight: "auto",
-    fontFamily: "Roboto",
-    fontSize: 16,
-    backgroundColor: "#FF6C00",
+    padding: 16,
+    borderWidth: 1,
   },
-  underButtonTextContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
+  passwordInput: {
+    position: "relative",
   },
-  textUnderButton: {
+  showPassBtn: {
+    position: "absolute",
+    top: 16,
+    left: 255,
+  },
+  showPassText: {
+    fontFamily: "Roboto-Regular",
     color: "#1B4371",
-    textAlign: "center",
-    fontSize: 16,
-    fontFamily: "Roboto",
   },
-  buttonText: {
-    color: "#FFFFFF",
-    fontFamily: "Roboto",
-    fontSize: 16,
+  registerBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 343,
+    height: 51,
+    borderRadius: 25,
+    backgroundColor: "#FF6C00",
+    marginBottom: 16,
+  },
+  registerText: {
+    fontFamily: "Roboto-Regular",
+    color: "#fff",
+  },
+  questionCont: {
+    flexDirection: "row",
+  },
+  questionText: {
+    fontFamily: "Roboto-Regular",
+    color: "#1B4371",
   },
 });
-
-export default RegistrationScreen;

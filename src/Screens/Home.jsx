@@ -1,87 +1,93 @@
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import PostsScreen from "./PostsScreen";
-import CreatePostsScreen from "./CreatePostsScreen";
-import ProfileScreen from "./ProfileScreen";
-import LogOutIcon from "../Components/LogOutIcon";
-import UserIcon from "../Components/UserIcon";
-import GridIcon from "../Components/GridIcon";
-import { ButtonNewPost } from "../Components/ButtonNewPost";
+import { PostsScreen } from "./PostsScreen";
+import { CreatePostsScreen } from "./CreatePostsScreen";
+import { ProfileScreen } from "./ProfileScreen";
+import { LogOutIcon } from "../components/LogOutIcon";
+import { BackArrowIcon } from "../components/BackArrowIcon";
+import { Feather } from "@expo/vector-icons";
 
-const Tabs = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
-const Home = () => {
+export const Home = () => {
   return (
-    <View style={styles.container}>
-      <Tabs.Navigator screenOptions={styles.headerStyles}>
-        <Tabs.Screen
-          name="PostsScreen"
-          component={PostsScreen}
-          options={{
-            headerRight: LogOutIcon,
-            tabBarButton: GridIcon,
-            title: "Публікації",
-          }}
-        />
-        <Tabs.Screen
-          name="CreatePostsScreen"
-          component={CreatePostsScreen}
-          options={{
-            tabBarButton: ButtonNewPost,
-            title: "Створити публікацію",
-          }}
-        />
-        <Tabs.Screen
-          name="ProfileScreen"
-          component={ProfileScreen}
-          options={{ tabBarButton: UserIcon }}
-        />
-      </Tabs.Navigator>
-    </View>
+    <Tab.Navigator
+      initialRouteName="PostScreen"
+      screenOptions={styles.navigationStyle}
+    >
+      <Tab.Screen
+        name="Posts"
+        component={PostsScreen}
+        options={{
+          headerRight: LogOutIcon,
+          title: "Публікації",
+          tabBarIcon: ({ color }) => (
+            <Feather name="grid" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Create"
+        component={CreatePostsScreen}
+        options={{
+          headerLeft: BackArrowIcon,
+          title: "Створити публікацію",
+          tabBarIcon: ({ color }) => (
+            <Feather name="plus" size={24} color={color} />
+          ),
+          tabBarStyle: {
+            display: "none",
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Feather name="user" size={24} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
-export default Home;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "white",
-  },
-
-  headerStyles: {
-    tabBarShowLabel: false,
-    tabBarStyle: {
-      paddingTop: 9,
-      display: "flex",
-      alignItems: "center",
+  navigationStyle: {
+    headerStyle: {
+      backgroundColor: "#fff",
+      height: 88,
+      borderBottomWidth: 1,
+      borderBottomColor: "#00000050",
     },
-
-    headerRightContainerStyle: { paddingRight: 16 },
-    headerLeftContainerStyle: { paddingLeft: 16 },
-
+    headerTitleAlign: "center",
     headerTitleStyle: {
       textAlign: "center",
-      fontFamily: "Roboto",
+      fontFamily: "Roboto-Medium",
       fontSize: 17,
-      fontWeight: 500,
-      lineHeight: 22,
-      letterSpacing: 0.408,
+      color: "#212121",
     },
+    headerLeftContainerStyle: { paddingLeft: 16 },
+    headerRightContainerStyle: { paddingRight: 16 },
 
-    headerTintColor: "rgba(33, 33, 33, 1)",
-    headerStyle: {
-      backgroundColor: "#FFFFFF",
-      height: 100,
-      shadowOffset: {
-        width: 0,
-        height: 0.5,
-      },
-      shadowColor: "#212121CC",
-      shadowOpacity: 0.3,
-      shadowRadius: 1.84,
-      elevation: 0,
+    tabBarStyle: {
+      height: 58,
+      backgroundColor: "#ffffff",
+      paddingTop: 9,
+      paddingLeft: 67,
+      paddingRight: 67,
+      borderTopWidth: 1,
+      borderTopColor: "#21212180",
     },
+    tabBarItemStyle: {
+      height: 40,
+      width: 70,
+      borderRadius: 20,
+    },
+    tabBarShowLabel: false,
+    tabBarActiveTintColor: "#fff",
+    tabBarInactiveTintColor: "#21212180",
+    tabBarActiveBackgroundColor: "#FF6C00",
   },
 });

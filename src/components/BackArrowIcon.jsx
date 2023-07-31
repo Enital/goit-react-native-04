@@ -2,16 +2,16 @@ import { useNavigation } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-export const LogOutIcon = () => {
+export const BackArrowIcon = () => {
   const navigation = useNavigation();
 
   const handleLogOut = () => {
-    navigation.navigate("Login");
+    navigation.goBack();
   };
 
   return (
     <Pressable onPress={handleLogOut}>
-      <Feather name="log-out" size={24} color="#BDBDBD" />
+      <Feather name="arrow-left" size={24} color="#21212180" />
     </Pressable>
   );
 };
